@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>북경 - 내몽골(적봉) 4박5일 스마트 가이드</title>
+    <style>
+        /* 기본 스타일 설정 (모바일 퍼스트 및 고딕 폰트) */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f7f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 헤더 디자인: 딥 레드 & 골드 */
+        header {
+            background: linear-gradient(135deg, #8B0000, #550000);
+            color: #fff;
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 4px solid #D4AF37;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #D4AF37;
+            color: #550000;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #f0d0d0;
+        }
+
+        /* 요약 정보 섹션 */
+        .summary-box {
+            background-color: #fff;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border-left: 4px solid #8B0000;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .summary-item strong {
+            color: #8B0000;
+        }
+
+        /* 고정형 탭 메뉴 (화면 전환 없는 자바스크립트 구동용) */
+        .tab-container {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 100;
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 2px solid #e0e0e0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            scroll-behavior: smooth;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 75px;
+            padding: 15px 0;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #8B0000;
+            font-weight: 700;
+            border-bottom: 3px solid #8B0000;
+            background-color: #fff8f8;
+        }
+
+        /* 일정 콘텐츠 영역 */
+        .content-container {
+            padding: 15px;
+            padding-bottom: 40px;
+        }
+
+        .day-content {
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        .day-content.active {
+            display: block; /* 선택된 날짜만 표시 */
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 호텔 및 식사 바 정보 */
+        .meta-info-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            width: 65px;
+            font-weight: 700;
+            color: #8B0000;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #444;
+        }
+
+        /* 타임라인 타일 디자인 */
+        .timeline {
+            position: relative;
+            padding-left: 25px;
+            border-left: 2px dashed #d0d0d0;
+            margin-left: 10px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #D4AF37;
+            border: 2px solid #8B0000;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            font-weight: 700;
+            color: #777;
+            margin-bottom: 2px;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 6px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: #555;
+            word-break: keep-all;
+        }
+
+        .highlight-text {
+            color: #b82d2d;
+            font-weight: 600;
+        }
+
+        /* 불포함/참고사항 하단 고정 안내 */
+        .footer-notice {
+            background-color: #eee;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-notice h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .footer-notice ul {
+            list-style-type: none;
+        }
+
+        .footer-notice li {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 10px;
+        }
+
+        .footer-notice li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #8B0000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 영역 -->
+    <header>
+        <span class="badge">Incentive Tour</span>
+        <h1>북경 - 내몽골(적봉) 4박 5일</h1>
+        <p>대초원과 사막을 동시에 만나는 이국적인 여정</p>
+    </header>
+
+    <!-- 상품 정보 요약 -->
+    <div class="summary-box">
+        <div class="summary-grid">
+            <div class="summary-item"><strong>항공 조건:</strong> LAND ONLY</div>
+            <div class="summary-item"><strong>룸 조건:</strong> 2인 1실 기준</div>
+            <div class="summary-item"><strong>쇼핑 조건:</strong> 성인 기준 2회</div>
+            <div class="summary-item"><strong>옵션 조건:</strong> 노옵션(No Option)</div>
+        </div>
+    </div>
+
+    <!-- 5일차 고정형 탭 메뉴 -->
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="openDay(event, 'day1')">1일차</button>
+        <button class="tab-btn" onclick="openDay(event, 'day2')">2일차</button>
+        <button class="tab-btn" onclick="openDay(event, 'day3')">3일차</button>
+        <button class="tab-btn" onclick="openDay(event, 'day4')">4일차</button>
+        <button class="tab-btn" onclick="openDay(event, 'day5')">5일차</button>
+    </div>
+
+    <!-- 상세 일정 영역 -->
+    <div class="content-container">
+
+        <!-- 1일차 -->
+        <div id="day1" class="day-content active">
+            <div class="meta-info-card">
+                <div class="info-row"><div class="info-label">오늘의 숙소</div><div class="info-value">적봉 만달국제 호텔 (준5성) 혹은 동급</div></div>
+                <div class="info-row"><div class="info-label">오늘의 식사</div><div class="info-value">중식: 현지식 / 석식: 샤브샤브</div></div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">08:15 - 09:40 (KE851)</div>
+                    <div class="timeline-title">인천 출발 / 북경 도착</div>
+                    <div class="timeline-desc">인천공항을 출발하여 북경공항에 도착한 후 가이드와 반가운 미팅을 진행합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">이화원 관광</div>
+                    <div class="timeline-desc">유네스코가 지정한 중국 최대 규모의 황실 정원인 <span class="highlight-text">“이화원”</span>을 여유롭게 관람합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">16:21 - 18:52 (G3673)</div>
+                    <div class="timeline-title">고속열차 탑승하여 적봉으로 이동</div>
+                    <div class="timeline-desc">북경역으로 이동하여 최신 고속열차에 탑승한 뒤 적봉역으로 편리하게 이동합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">적봉 도착 후 휴식</div>
+                    <div class="timeline-desc">적봉 도착 후 따뜻한 샤브샤브로 석식을 즐기고 호텔 투숙 및 휴식을 취합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2일차 -->
+        <div id="day2" class="day-content">
+            <div class="meta-info-card">
+                <div class="info-row"><div class="info-label">오늘의 숙소</div><div class="info-value">궁거얼 최신 유리게르 (2인1실)</div></div>
+                <div class="info-row"><div class="info-label">오늘의 식사</div><div class="info-value">조식: 호텔식 / 중식: 현지식 / 석식: 수바러우 (몽골족 특식)</div></div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">사막의 경이로움, 옥룡사호 이동</div>
+                    <div class="timeline-desc">호텔 조식 후 모래산과 붉은 바위들이 어우러진 이색 사막지대인 옥룡사호로 이동합니다. (약 1시간 30분 소요)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">사막 액티비티 체험</div>
+                    <div class="timeline-desc">광활한 사막을 온몸으로 느끼는 <span class="highlight-text">“낙타 트레킹”</span>과 사막 언덕을 스릴 있게 넘나드는 <span class="highlight-text">“지프차 투어”</span>를 즐깁니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">북방의 소황산, 대청산 관광</div>
+                    <div class="timeline-desc">중식 후 대청산 풍경구로 이동하여 리프트와 전동카(왕복 포함)를 이용해 웅장한 대청산 절경을 감상합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">달달선 드라이브 & 유리게르 도착</div>
+                    <div class="timeline-desc">중국 최고의 감성 초원 드라이브 도로인 <span class="highlight-text">“달달선”</span>을 따라 궁거얼 초원으로 이동합니다. 단지 도착 후 전통 몽골식 환영식이 진행됩니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">이국적인 낭만, 캠프파이어</div>
+                    <div class="timeline-desc">몽골족 특식인 수바러우로 석식을 마친 후, 밤하늘 아래 펼쳐지는 이국적인 <span class="highlight-text">“캠프파이어”</span> 레크리에이션과 함께 게르에서 특별한 밤을 보냅니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3일차 -->
+        <div id="day3" class="day-content">
+            <div class="meta-info-card">
+                <div class="info-row"><div class="info-label">오늘의 숙소</div><div class="info-value">공주호 몽고포 리조트 (2인1실)</div></div>
+                <div class="info-row"><div class="info-label">오늘의 식사</div><div class="info-value">조식: 게르조식 / 중식: 비빔밥 / 석식: 삼겹살 (무제한 무한리필)</div></div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">몽골 전통 문화체험</div>
+                    <div class="timeline-desc">상쾌한 초원의 아침을 맞이하며 몽골 전통 복장 체험 및 활쏘기 체험을 진행합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">유럽풍 초원, 울란부통 이동</div>
+                    <div class="timeline-desc">부드러운 언덕과 평원이 조화를 이루어 유럽을 연상케 하는 울란부통 초원으로 이동합니다. (약 1시간 40분 소요)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">울란부통 영상기지 & 비경 지프차 투어</div>
+                    <div class="timeline-desc">수많은 영화와 드라마의 배경이 된 영상기지를 관람하고, 일반 차량으로는 갈 수 없는 대초원 깊숙한 비경을 <span class="highlight-text">“오프로드 지프차”</span>로 질주합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">공주호 관람 & 압도적인 마상쇼</div>
+                    <div class="timeline-desc">슬픈 전설을 간직한 아름다운 공주호를 산책한 후, 몽골 마부들이 달리는 말 위에서 펼치는 스펙터클한 <span class="highlight-text">“마상쇼”</span>를 직관합니다. 석식은 든든한 삼겹살 무제한 제공입니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4일차 -->
+        <div id="day4" class="day-content">
+            <div class="meta-info-card">
+                <div class="info-row"><div class="info-label">오늘의 숙소</div><div class="info-value">북경 춘휘원호텔 (준5성) 혹은 동급</div></div>
+                <div class="info-row"><div class="info-label">오늘의 식사</div><div class="info-value">조식: 호텔식 / 중식: 현지식 / 석식: 오리구이 (베이징덕 특식)</div></div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">적봉으로 귀환 및 힐링 마사지</div>
+                    <div class="timeline-desc">호텔 조식 후 여유롭게 적봉으로 이동합니다. (약 3시간 50분 소요) 이동 후 지난 여정의 피로를 완벽하게 날려줄 <span class="highlight-text">“발+전신 힐링 마사지(90분)”</span> 체험을 즐깁니다. (※기사/가이드 팁 별도)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">16:51 - 19:27 (G3676)</div>
+                    <div class="timeline-title">북경으로 컴백</div>
+                    <div class="timeline-desc">적봉역을 출발하여 고속열차편으로 북경역에 다시 복귀합니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">석식 및 호텔 투숙</div>
+                    <div class="timeline-desc">북경의 시그니처 요리인 오리구이(베이징덕)로 풍성한 저녁 식사를 마친 후 명품 춘휘원 호텔에서 달콤한 휴식을 취합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5일차 -->
+        <div id="day5" class="day-content">
+            <div class="meta-info-card">
+                <div class="info-row"><div class="info-label">오늘의 식사</div><div class="info-value">조식: 호텔식 / 중식: 맛깔나는 한식</div></div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">만리장성의 요새, 거용관 장성</div>
+                    <div class="timeline-desc">호텔 조식 후 천하제일웅관이라 불릴 만큼 가파르고 웅장한 요새인 만리장성의 <span class="highlight-text">“거용관”</span> 코스를 직접 밟아봅니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">올림픽 주경기장 외관 관람</div>
+                    <div class="timeline-desc">새둥지 모양을 형상화하여 독특하고 거대한 스케일을 자랑하는 베이징 올림픽 주경기장의 외관을 배경으로 멋진 기념사진을 남깁니다.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-title">북경 출발 / 인천 도착</div>
+                    <div class="timeline-desc">중식을 맛있게 마친 후 북경 공항으로 안전하게 이동하여 비행기에 탑승, 인천국제공항에 도착하며 모든 공식 투어 일정을 마무리합니다. 감사합니니다.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 하단 유의사항/포함내역 정보 -->
+    <div class="footer-notice">
+        <h3>[여행 특별 고지사항]</h3>
+        <ul>
+            <li><strong>포함 사항:</strong> 호텔(2인1실), 일정 내 차량, 식사, 관광지 입장료, 기사/가이드 경비 및 팁, 여행자보험</li>
+            <li><strong>불포함 사항:</strong> 싱글베드 사용료(싱글차지), 매너팁 등 기타 개인 소모 비용</li>
+            <li>본 상품은 성인 단체 기준으로 <strong>총 2회의 쇼핑(침향, 캐시미어)</strong>이 포함되어 있으며 따로 옵션 강요가 없는 <strong>노옵션</strong> 청정 상품입니다.</li>
+            <li>인원 변동이나 급격한 환율 변동 폭이 발생할 시 상품가가 일부 조정될 수 있음을 사전 양해 바랍니다.</li>
+        </ul>
+    </div>
+
+    <!-- 탭 전환 자바스크립트 코드 -->
+    <script>
+        function openDay(evt, dayName) {
+            var i, daycontent, tablinks;
+            
+            // 모든 일정 콘텐츠 숨김
+            daycontent = document.getElementsByClassName("day-content");
+            for (i = 0; i < daycontent.length; i++) {
+                daycontent[i].classList.remove("active");
+            }
+
+            // 모든 탭 버튼 비활성화
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            // 선택된 일정 보여주기 및 클릭된 버튼 활성화
+            document.getElementById(dayName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+
+            // 선택 시 모바일 화면이 상단으로 자동 스크롤되도록 지원
+            window.scrollTo({
+                top: document.querySelector('.tab-container').offsetTop - 10,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
